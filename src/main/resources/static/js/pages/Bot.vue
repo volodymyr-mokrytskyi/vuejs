@@ -1,183 +1,122 @@
 <template>
-    <v-layout justify-space-around d-flex>
-        <v-form>
-            <v-container fluid grid-list-md>
-                <v-layout align-start justify-start column wrap>
-                    <v-flex d-flex xs12 sm6 md2>
-                        <v-text-field
-                                v-model="commandName"
-                                label="Command name"
-                                outline>
-                        </v-text-field>
-                    </v-flex>
-                    <v-flex d-flex xs12 sm6 md2>
-                        <v-combobox
-                                v-model="type"
-                                :items="types"
-                                label="Message type">
-                        </v-combobox>
-                    </v-flex>
-                </v-layout>
-            </v-container>
 
-            <v-container v-if="type==='Message'" fluid grid-list-md>
-                <v-layout align-start justify-start column wrap>
-                    <v-flex d-flex xs12 sm6 md2>
+    <v-container grid-list-md fluid>
+        <v-layout row wrap>
+
+            <v-flex xs2>
+                <v-form>
+                    <v-text-field
+                            v-model="commandName"
+                            label="Command name"
+                            outline>
+                    </v-text-field>
+                    <v-combobox
+                            v-model="type"
+                            :items="types"
+                            label="Message type">
+                    </v-combobox>
+                    <div v-if="type==='Message'">
                         <v-text-field
                                 label="Bot's message"
                                 outline
                                 v-model="messageText">
                         </v-text-field>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-
-            <v-container v-if="type==='Response'" fluid grid-list-md>
-                <v-layout align-start justify-start column wrap>
-                    <v-flex d-flex xs12 sm6 md2>
+                    </div>
+                    <div v-if="type==='Response'">
                         <v-text-field
                                 label="Bot's response"
                                 outline
                                 v-model="responseText">
                         </v-text-field>
-                    </v-flex>
-                    <v-flex d-flex xs12 sm6 md2>
                         <p>Placeholders</p>
-                    </v-flex>
-                </v-layout>
 
-                <v-layout align-start justify-start column wrap>
-                    <v-flex d-flex xs12 sm6 md2>
                         <v-combobox
                                 v-model="placeholder"
                                 :items="placeholders"
                                 @change="selected => this.responseText += '[' + selected.toLowerCase() + ']'"
                                 label="Placeholder type">
                         </v-combobox>
-                    </v-flex>
-                </v-layout>
-            </v-container>
+                    </div>
 
-            <v-container v-if="type==='Animation'" fluid grid-list-md>
-                <v-layout align-start justify-start column wrap>
-                    <v-flex d-flex xs12 sm6 md2>
+                    <div v-if="type==='Animation'">
                         <v-text-field
                                 label="Animation text"
                                 outline
                                 v-model="animationText">
 
                         </v-text-field>
-                    </v-flex>
-                    <v-flex d-flex xs12 sm6 md2>
                         <p>Placeholders</p>
-                    </v-flex>
-                </v-layout>
-
-                <v-layout align-start justify-start column wrap>
-
-                    <v-flex d-flex xs12 sm6 md2>
                         <v-combobox
                                 v-model="placeholder"
                                 :items="placeholders"
                                 @change="selected => this.animationText += '[' + selected.toLowerCase() + ']'"
                                 label="Placeholder type">
                         </v-combobox>
-
-                    </v-flex>
-                </v-layout>
-
-                <v-layout align-start justify-start column wrap>
-                    <v-flex d-flex xs12 sm6 md1>
                         <v-text-field
                                 label="Image url"
                                 outline
                                 v-model="imageUrl">
                         </v-text-field>
-                    </v-flex>
-                </v-layout>
-
-
-                <v-layout align-start justify-start column wrap>
-                    <v-flex xs12 sm6 md1>
                         <v-combobox
                                 @change="item => this.ratio = ratios.find(o => o.aspect === item).value"
                                 :items="ratios.map(asp => asp.aspect)"
                                 label="Ratio">
                         </v-combobox>
-                    </v-flex>
 
-                </v-layout>
+                        <div v-if="imageUrl!==''">
+                            <v-img
+                                    max-height="220px"
+                                    max-width="220px"
+                                    contain
+                                    :src="imageUrl"
+                                    :lazy-src="imageUrl"
+                                    :aspect-ratio="ratio"
+                                    class="grey lighten-2">
+                            </v-img>
+                        </div>
 
-                <v-layout v-if="imageUrl!==''" align-start justify-start wrap>
-                    <v-flex xs12 sm6 md6 d-flex>
-                        <v-img
-                                max-height="220px"
-                                max-width="220px"
-                                contain
-                                :src="imageUrl"
-                                :lazy-src="imageUrl"
-                                :aspect-ratio="ratio"
-                                class="grey lighten-2">
-                        </v-img>
-                    </v-flex>
-                </v-layout>
-            </v-container>
+                        <div v-if="messageText!=='' || responseText!=='' || animationText!==''">
+                            <v-flex xs6>
+                                <v-btn depressed
+                                       small
+                                       @click="preview=true">
+                                    Preview
+                                </v-btn>
+                                <v-btn depressed small color="primary">Submit</v-btn>
+                            </v-flex>
+                        </div>
 
-            <v-container v-if="messageText!=='' || responseText!=='' || animationText!==''" fluid grid-list-md>
-                <v-layout align-start justify-start column wrap>
-                    <v-layout align-start justify-start row wrap>
-                        <v-flex d-flex xs12 sm6 md2>
-                            <v-btn depressed
-                                   large
-                                   @click="preview=true">
-                                Preview
-                            </v-btn>
-                            <v-btn depressed large color="primary">Submit</v-btn>
-                        </v-flex>
-                    </v-layout>
-                </v-layout>
-            </v-container>
+                    </div>
+                </v-form>
+            </v-flex>
+            <v-flex xs8>
+                <v-form>
+                    <v-img
+                            contain
+                            :src="previewImage"
+                            :lazy-src="previewImage"
+                            :aspect-ratio="previewRatio"
+                            class="grey lighten-2">
+                    </v-img>
+                </v-form>
+            </v-flex>
+            <v-flex xs2>
+                <v-form>
+                    <v-text-field
+                            label="Stream layout image"
+                            outline
+                            v-model="previewImage">
+                    </v-text-field>
+                    <v-combobox
+                            @change="item => this.previewRatio = previewRatios.find(o => o.aspect === item).value"
+                            :items="previewRatios.map(asp => asp.aspect)"
+                            label="Ratio">
+                    </v-combobox>
 
-        </v-form>
-
-        <v-form>
-            <v-container v-if="preview && (previewImage!=='' || previewChat!=='')" fluid grid-list-lg>
-                <v-layout align-center justify-start wrap>
-                    <v-flex xs12 sm12 md12 d-flex>
-                        <v-img
-                                contain
-                                :src="previewImage"
-                                :lazy-src="previewImage"
-                                :aspect-ratio="ratio"
-                                class="grey lighten-2">
-                        </v-img>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-        </v-form>
-
-        <v-form>
-            <v-container v-if="preview" fluid grid-list-md>
-                <v-layout   align-end justify-start column wrap>
-                    <v-flex d-flex xs12 sm6 md1>
-                        <v-text-field
-                                label="Image url"
-                                outline
-                                v-model="previewImage">
-                        </v-text-field>
-                    </v-flex>
-                    <v-layout  align-start justify-start row wrap>
-                        <v-flex d-flex xs12 sm6 md1>
-                            <v-btn depressed large>Preview</v-btn>
-                            <v-btn depressed large color="primary">Submit</v-btn>
-                        </v-flex>
-                    </v-layout>
-
-                </v-layout>
-
-            </v-container>
-        </v-form>
-    </v-layout>
+                </v-form>
+            </v-flex>
+        </v-layout>
+    </v-container>
 </template>
 <style>
 
@@ -205,6 +144,16 @@
                     {aspect: '6:4', value: '1.5'},
                     {aspect: '16:9', value: '1.7'},
                     {aspect: '18:6', value: '3'},
+                ],
+                previewRatio: '1:1',
+                previewRatios: [
+                    {aspect: '1366x768', value: '1.778'},
+                    {aspect: '1920x1080', value: '1.777'},
+                    {aspect: '1440x900', value: '1.6'},
+                    {aspect: '1600x900', value: '1.777'},
+                    {aspect: '1280:1024', value: '1.25'},
+                    {aspect: '1280:800', value: '1.6'},
+                    {aspect: '1024:768', value: '1.333'},
                 ],
                 show: false,
                 preview: false,
